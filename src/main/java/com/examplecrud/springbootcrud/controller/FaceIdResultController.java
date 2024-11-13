@@ -18,7 +18,6 @@ public class FaceIdResultController {
         this.faceIdResultService = faceIdResultService;
     }
 
-    // Endpoint untuk menerima sdkToken dan mendapatkan hasil FaceId
     @PostMapping("/getFaceIdResult")
     public ResponseEntity<FaceIdResultResponse> getFaceIdResult(@RequestBody SdkTokenRequest sdkTokenRequest) {
         try {
@@ -26,7 +25,7 @@ public class FaceIdResultController {
             FaceIdResultResponse response = faceIdResultService.getFaceIdResult(sdkTokenRequest);
             return ResponseEntity.ok(response);
         } catch (TencentCloudSDKException e) {
-            // Jika ada error, kirimkan status error dan pesan exception
+            // Jika terjadi error, kirim status 500 dan pesan error
             return ResponseEntity.status(500).body(null);
         }
     }

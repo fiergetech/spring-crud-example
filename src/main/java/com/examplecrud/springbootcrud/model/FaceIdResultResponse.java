@@ -19,7 +19,7 @@ public class FaceIdResultResponse {
         private String extra;
         private String requestId;
         private String result;
-        private int similarity;
+        private Float similarity;
         private String video;
 
         // Getter and Setter
@@ -63,11 +63,11 @@ public class FaceIdResultResponse {
             this.result = result;
         }
 
-        public int getSimilarity() {
+        public Float getSimilarity() {
             return similarity;
         }
 
-        public void setSimilarity(int similarity) {
+        public void setSimilarity(Float similarity) {
             this.similarity = similarity;
         }
 

@@ -37,12 +37,12 @@ public class FaceIdResultService {
         FaceIdResultResponse.Response responseContent = new FaceIdResultResponse.Response();
         
         responseContent.setRequestId(resp.getRequestId());
-        responseContent.setDescription("The verification process wasn't finished");
-        responseContent.setResult("-999");
-        responseContent.setSimilarity(0);
-        responseContent.setBestFrame("");
-        responseContent.setExtra("");
-        responseContent.setVideo("");
+        responseContent.setDescription(resp.getDescription());
+        responseContent.setResult(resp.getResult());
+        responseContent.setSimilarity(resp.getSimilarity());
+        responseContent.setBestFrame(resp.getBestFrame());
+        responseContent.setExtra(resp.getExtra());
+        responseContent.setVideo(resp.getVideo());
         
         response.setResponse(responseContent);
 
