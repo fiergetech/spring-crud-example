@@ -1,6 +1,6 @@
 package com.examplecrud.springbootcrud.model;
 
-public class OCRResponse {
+public class OcrResponse {
 
     private Response response;
 

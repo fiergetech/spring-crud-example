@@ -9,11 +9,11 @@ import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.examplecrud.springbootcrud.model.OCRRequest;
-import com.examplecrud.springbootcrud.model.OCRResponse;
+import com.examplecrud.springbootcrud.model.OcrRequest;
+import com.examplecrud.springbootcrud.model.OcrResponse;
 
 @Service
-public class OCRService {
+public class OcrService {
 
     @Value("${tencent.secretId}")
     private String secretId;
@@ -21,7 +21,7 @@ public class OCRService {
     @Value("${tencent.secretKey}")
     private String secretKey;
 
-    public OCRResponse recognizeIDCard(OCRRequest ocrRequest) throws TencentCloudSDKException {
+    public OcrResponse recognizeIndonesiaIDCardOCR(OcrRequest ocrRequest) throws TencentCloudSDKException {
         Credential cred = new Credential(secretId, secretKey);
 
         HttpProfile httpProfile = new HttpProfile();
@@ -41,8 +41,8 @@ public class OCRService {
         try {
             RecognizeIndonesiaIDCardOCRResponse resp = client.RecognizeIndonesiaIDCardOCR(req);
 
-            OCRResponse response = new OCRResponse();
-            OCRResponse.Response responseContent = new OCRResponse.Response();
+            OcrResponse response = new OcrResponse();
+            OcrResponse.Response responseContent = new OcrResponse.Response();
             
             responseContent.setAgama(resp.getAgama());
             responseContent.setAlamat(resp.getAlamat());
@@ -70,8 +70,7 @@ public class OCRService {
             return response;
 
         } catch (TencentCloudSDKException e) {
-            // Log the detailed error message
-            System.err.println("Error calling Tencent Cloud OCR API: " + e.getMessage());
+            System.err.println("Error : " + e.getMessage());
             System.err.println("Error details: " + e.toString());
             throw new TencentCloudSDKException("Failed to recognize ID Card: " + e.getMessage());
         }
