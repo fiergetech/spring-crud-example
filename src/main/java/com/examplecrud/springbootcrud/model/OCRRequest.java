@@ -1,6 +1,6 @@
 package com.examplecrud.springbootcrud.model;
 
-public class OcrRequest {
+public class OCRRequest {
     private String imageBase64;
     private String imageUrl;
     private Boolean returnHeadImage;

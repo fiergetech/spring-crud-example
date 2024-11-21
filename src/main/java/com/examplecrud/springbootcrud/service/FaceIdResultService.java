@@ -1,15 +1,19 @@
 package com.examplecrud.springbootcrud.service;
 
+import com.examplecrud.springbootcrud.model.FaceIdResultResponse;
+import com.examplecrud.springbootcrud.model.SdkTokenRequest;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.faceid.v20180301.FaceidClient;
 import com.tencentcloudapi.faceid.v20180301.models.GetFaceIdResultIntlRequest;
 import com.tencentcloudapi.faceid.v20180301.models.GetFaceIdResultIntlResponse;
-import com.examplecrud.springbootcrud.model.FaceIdResultResponse;
-import com.examplecrud.springbootcrud.model.SdkTokenRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 public class FaceIdResultService {
 
@@ -19,32 +23,53 @@ public class FaceIdResultService {
     @Value("${tencent.secretKey}")
     private String secretKey;
 
-    public FaceIdResultResponse getFaceIdResult(SdkTokenRequest sdkTokenRequest) throws TencentCloudSDKException {
-        // Menggunakan credential untuk autentikasi
-        Credential cred = new Credential(secretId, secretKey);
-        // Menggunakan FaceidClient dari Tencent Cloud SDK
-        FaceidClient client = new FaceidClient(cred, "ap-jakarta");
+    private Credential createCredential() {
+        return new Credential(secretId, secretKey);
+    }
 
-        // Membuat permintaan untuk menggunakan sdkToken
+    public FaceIdResultResponse getFaceIdResult(SdkTokenRequest sdkTokenRequest) {
+        try {
+            validateSdkTokenRequest(sdkTokenRequest);
+
+            log.info("Fetching Face ID result for SDK token: {}", sdkTokenRequest.getSdkToken());
+            Credential cred = createCredential();
+            FaceidClient client = new FaceidClient(cred, "ap-jakarta");
+
+            GetFaceIdResultIntlRequest req = createFaceIdResultRequest(sdkTokenRequest);
+            GetFaceIdResultIntlResponse resp = client.GetFaceIdResultIntl(req);
+
+            FaceIdResultResponse response = mapResponse(resp);
+
+            log.info("Successfully fetched Face ID result. Request ID: {}", resp.getRequestId());
+            return response;
+        } catch (TencentCloudSDKException e) {
+            log.error("Failed to fetch Face ID result: {}", e.getMessage(), e);
+            throw new RuntimeException("Error while fetching Face ID result", e);
+        }
+    }
+
+    private void validateSdkTokenRequest(SdkTokenRequest sdkTokenRequest) {
+        if (sdkTokenRequest == null || !StringUtils.hasText(sdkTokenRequest.getSdkToken())) {
+            throw new IllegalArgumentException("Invalid SDK token request. SDK token must not be null or empty.");
+        }
+    }
+
+    private GetFaceIdResultIntlRequest createFaceIdResultRequest(SdkTokenRequest sdkTokenRequest) {
         GetFaceIdResultIntlRequest req = new GetFaceIdResultIntlRequest();
         req.setSdkToken(sdkTokenRequest.getSdkToken());
+        return req;
+    }
 
-        // Mengirimkan request dan mendapatkan response
-        GetFaceIdResultIntlResponse resp = client.GetFaceIdResultIntl(req);
-
-        // Menyusun response sesuai format yang diinginkan
+    private FaceIdResultResponse mapResponse(GetFaceIdResultIntlResponse resp) {
         FaceIdResultResponse response = new FaceIdResultResponse();
-        FaceIdResultResponse.Response responseContent = new FaceIdResultResponse.Response();
-        
-        responseContent.setRequestId(resp.getRequestId());
-        responseContent.setDescription(resp.getDescription());
-        responseContent.setResult(resp.getResult());
-        responseContent.setSimilarity(resp.getSimilarity());
-        responseContent.setBestFrame(resp.getBestFrame());
-        responseContent.setExtra(resp.getExtra());
-        responseContent.setVideo(resp.getVideo());
-        
-        response.setResponse(responseContent);
+
+        response.setRequestId(resp.getRequestId());
+        response.setDescription(resp.getDescription());
+        response.setResult(resp.getResult());
+        response.setSimilarity(resp.getSimilarity());
+        response.setBestFrame(resp.getBestFrame());
+        response.setExtra(resp.getExtra());
+        response.setVideo(resp.getVideo());
 
         return response;
     }

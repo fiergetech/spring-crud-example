@@ -1,8 +1,8 @@
 package com.examplecrud.springbootcrud.controller;
 
-import com.examplecrud.springbootcrud.model.OcrRequest;
-import com.examplecrud.springbootcrud.model.OcrResponse;
-import com.examplecrud.springbootcrud.service.OcrService;
+import com.examplecrud.springbootcrud.model.OCRRequest;
+import com.examplecrud.springbootcrud.model.OCRResponse;
+import com.examplecrud.springbootcrud.service.OCRService;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class OcrController {
+public class OCRController {
 
-    private final OcrService ocrService;
+    private final OCRService ocrService;
 
-    public OcrController(OcrService ocrService) {
+    public OCRController(OCRService ocrService) {
         this.ocrService = ocrService;
     }
 
     @PostMapping("/ocr")
-    public ResponseEntity<OcrResponse> recognizeIDCard(@RequestBody OcrRequest ocrRequest) {
+    public ResponseEntity<OCRResponse> recognizeIDCard(@RequestBody OCRRequest ocrRequest) {
         try {
-            OcrResponse response = ocrService.recognizeIndonesiaIDCardOCR(ocrRequest);
+            OCRResponse response = ocrService.recognizeIndonesiaIDCardOCR(ocrRequest);
             return ResponseEntity.ok(response);
         } catch (TencentCloudSDKException e) {
             return ResponseEntity.status(500).body(null);

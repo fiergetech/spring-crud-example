@@ -1,5 +1,7 @@
 package com.examplecrud.springbootcrud.service;
 
+import com.examplecrud.springbootcrud.model.OCRRequest;
+import com.examplecrud.springbootcrud.model.OCRResponse;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.ocr.v20181119.OcrClient;
@@ -9,11 +11,9 @@ import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.examplecrud.springbootcrud.model.OcrRequest;
-import com.examplecrud.springbootcrud.model.OcrResponse;
 
 @Service
-public class OcrService {
+public class OCRService {
 
     @Value("${tencent.secretId}")
     private String secretId;
@@ -21,7 +21,7 @@ public class OcrService {
     @Value("${tencent.secretKey}")
     private String secretKey;
 
-    public OcrResponse recognizeIndonesiaIDCardOCR(OcrRequest ocrRequest) throws TencentCloudSDKException {
+    public OCRResponse recognizeIndonesiaIDCardOCR(OCRRequest ocrRequest) throws TencentCloudSDKException {
         Credential cred = new Credential(secretId, secretKey);
 
         HttpProfile httpProfile = new HttpProfile();
@@ -41,8 +41,8 @@ public class OcrService {
         try {
             RecognizeIndonesiaIDCardOCRResponse resp = client.RecognizeIndonesiaIDCardOCR(req);
 
-            OcrResponse response = new OcrResponse();
-            OcrResponse.Response responseContent = new OcrResponse.Response();
+            OCRResponse response = new OCRResponse();
+            OCRResponse.Response responseContent = new OCRResponse.Response();
             
             responseContent.setAgama(resp.getAgama());
             responseContent.setAlamat(resp.getAlamat());
