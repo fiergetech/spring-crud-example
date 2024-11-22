@@ -1,5 +1,8 @@
 package com.examplecrud.springbootcrud.model;
 
+import lombok.Data;
+
+@Data
 public class FaceId {
     private Response response;
 

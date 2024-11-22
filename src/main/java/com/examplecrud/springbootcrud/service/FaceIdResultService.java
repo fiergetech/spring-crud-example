@@ -28,8 +28,16 @@ public class FaceIdResultService {
     }
 
     public FaceIdResultResponse getFaceIdResult(SdkTokenRequest sdkTokenRequest) {
+        FaceIdResultResponse response = new FaceIdResultResponse();
         try {
-            validateSdkTokenRequest(sdkTokenRequest);
+            try{
+                validateSdkTokenRequest(sdkTokenRequest);
+            }catch(Exception e){
+                log.error("Failed to fetch Face ID result: {}", e.getMessage(), e);
+
+                response.setResponseCode("500");
+                response.setResponseMessage("Failed to fetch Face ID result: "+e.getMessage());
+            }
 
             log.info("Fetching Face ID result for SDK token: {}", sdkTokenRequest.getSdkToken());
             Credential cred = createCredential();
@@ -38,14 +46,17 @@ public class FaceIdResultService {
             GetFaceIdResultIntlRequest req = createFaceIdResultRequest(sdkTokenRequest);
             GetFaceIdResultIntlResponse resp = client.GetFaceIdResultIntl(req);
 
-            FaceIdResultResponse response = mapResponse(resp);
+            response = mapResponse(resp);
 
             log.info("Successfully fetched Face ID result. Request ID: {}", resp.getRequestId());
-            return response;
         } catch (TencentCloudSDKException e) {
             log.error("Failed to fetch Face ID result: {}", e.getMessage(), e);
-            throw new RuntimeException("Error while fetching Face ID result", e);
+
+            response.setResponseCode("500");
+            response.setResponseMessage("Failed to fetch Face ID result: "+e.getMessage());
         }
+
+        return response;
     }
 
     private void validateSdkTokenRequest(SdkTokenRequest sdkTokenRequest) {
@@ -62,14 +73,20 @@ public class FaceIdResultService {
 
     private FaceIdResultResponse mapResponse(GetFaceIdResultIntlResponse resp) {
         FaceIdResultResponse response = new FaceIdResultResponse();
+        FaceIdResultResponse.DataContent dataContent = new FaceIdResultResponse.DataContent();
 
-        response.setRequestId(resp.getRequestId());
-        response.setDescription(resp.getDescription());
-        response.setResult(resp.getResult());
-        response.setSimilarity(resp.getSimilarity());
-        response.setBestFrame(resp.getBestFrame());
-        response.setExtra(resp.getExtra());
-        response.setVideo(resp.getVideo());
+        dataContent.setRequestId(resp.getRequestId());
+        dataContent.setDescription(resp.getDescription());
+        dataContent.setResult(resp.getResult());
+        dataContent.setSimilarity(resp.getSimilarity());
+        dataContent.setBestFrame(resp.getBestFrame());
+        dataContent.setExtra(resp.getExtra());
+        dataContent.setVideo(resp.getVideo());
+
+        response.setResponseCode("200");
+        response.setResponseMessage("Success");
+
+        response.setData(dataContent);
 
         return response;
     }

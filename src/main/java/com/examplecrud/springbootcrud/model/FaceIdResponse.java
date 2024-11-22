@@ -1,23 +1,17 @@
 package com.examplecrud.springbootcrud.model;
 
+import lombok.Data;
+
+@Data
 public class FaceIdResponse {
-    private String sdkToken;
-    private String requestId;
+    private String responseCode;
+    private String responseMessage;
+    private FaceIdResponse.DataContent data;
 
-    // Getter dan Setter
-    public String getSdkToken() {
-        return sdkToken;
+    @Data
+    public static class DataContent {
+        private String sdkToken;
+        private String requestId;
     }
 
-    public void setSdkToken(String sdkToken) {
-        this.sdkToken = sdkToken;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
 }

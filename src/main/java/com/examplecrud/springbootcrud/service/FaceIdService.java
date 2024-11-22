@@ -25,6 +25,7 @@ public class FaceIdService {
     }
 
     public FaceIdResponse getFaceIdToken() {
+        FaceIdResponse faceIdResponse = new FaceIdResponse();
         try {
             log.info("Generating Face ID token...");
             Credential cred = createCredential();
@@ -33,15 +34,24 @@ public class FaceIdService {
             GetFaceIdTokenIntlRequest req = new GetFaceIdTokenIntlRequest();
             GetFaceIdTokenIntlResponse resp = client.GetFaceIdTokenIntl(req);
 
-            FaceIdResponse faceIdResponse = new FaceIdResponse();
-            faceIdResponse.setSdkToken(resp.getSdkToken());
-            faceIdResponse.setRequestId(resp.getRequestId());
+            FaceIdResponse.DataContent dataContent = new FaceIdResponse.DataContent();
+            dataContent.setSdkToken(resp.getSdkToken());
+            dataContent.setRequestId(resp.getRequestId());
+
+            faceIdResponse.setResponseCode("200");
+            faceIdResponse.setResponseMessage("Success");
+            faceIdResponse.setData(dataContent);
 
             log.info("Successfully generated Face ID token. Request ID: {}", resp.getRequestId());
             return faceIdResponse;
         } catch (TencentCloudSDKException e) {
             log.error("Failed to generate Face ID token: {}", e.getMessage(), e);
-            throw new RuntimeException("Error while generating Face ID token", e);
+            faceIdResponse = new FaceIdResponse();
+
+            faceIdResponse.setResponseCode("500");
+            faceIdResponse.setResponseMessage("Failed to generate Face ID Token: "+ e.getMessage());
         }
+
+        return faceIdResponse;
     }
 }
