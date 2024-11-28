@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs # Jika ada kebutuhan logging, sesuaikan sesuai kebutuhanmu
+    environment:
+      SPRING_PROFILES_ACTIVE: dev # Sesuaikan jika menggunakan Spring profile
